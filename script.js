@@ -62,11 +62,13 @@
         }
     }
 
-    // --- FUNÇÕES PARA SUBGRUPOS (Licença) ---
-    function toggleSubgroupOptions() {
-        const checkbox = document.getElementById('check-subgrupo-licenca');
-        const wrapper = document.querySelector('#form-licenca .da-toggle-wrapper');
-        const container = document.getElementById('subgroup-options-container');
+    // --- FUNÇÕES GERAIS PARA SUBGRUPOS (Licença, Retorno, Prolongamento) ---
+    function toggleSubgroupOptions(checkbox) {
+        // Encontra o wrapper pai (para estilo) e o container de opções (próximo irmão ou via classe)
+        const wrapper = checkbox.closest('.da-toggle-wrapper');
+        // Busca o container dentro do mesmo formulário
+        const form = checkbox.closest('form');
+        const container = form.querySelector('.subgroup-options-wrapper');
 
         if(checkbox.checked) {
             wrapper.classList.add('active');
@@ -77,17 +79,20 @@
             container.classList.add('opacity-0');
             setTimeout(() => container.classList.add('hidden'), 300);
             
-            // Resetar seleções ao fechar
-            document.querySelectorAll('.subgroup-selection-btn').forEach(btn => btn.classList.remove('selected'));
-            document.getElementById('subgroup-permissions-list').innerHTML = '';
+            // Resetar seleções ao fechar dentro deste formulário
+            container.querySelectorAll('.subgroup-selection-btn').forEach(btn => btn.classList.remove('selected'));
+            container.querySelector('.subgroup-permissions-list').innerHTML = '';
         }
     }
 
     function toggleSubgroupSelection(btn) {
         btn.classList.toggle('selected');
         const group = btn.dataset.group; // DA, DRI, DM
-        const container = document.getElementById('subgroup-permissions-list');
-        const inputId = `perm-group-${group}`;
+        
+        // Encontra a lista de permissões DENTRO do container atual
+        const optionsWrapper = btn.closest('.subgroup-options-wrapper');
+        const container = optionsWrapper.querySelector('.subgroup-permissions-list');
+        const inputId = `perm-group-${group}`; // ID único no contexto da lista
 
         if (btn.classList.contains('selected')) {
             // Criar campo de permissão dinâmico e minimalista
@@ -95,7 +100,6 @@
             wrapper.id = inputId;
             wrapper.className = "minimal-perm-group";
             
-            // Define cores de tag baseadas no grupo (opcional, mas bonito)
             let tagColor = "bg-slate-100 text-slate-500";
             if(group === 'DA') tagColor = "bg-sky-50 text-sky-600";
             if(group === 'DRI') tagColor = "bg-pink-50 text-pink-600";
@@ -107,8 +111,8 @@
             `;
             container.appendChild(wrapper);
         } else {
-            // Remover campo se desmarcado
-            const el = document.getElementById(inputId);
+            // Remover campo se desmarcado (procura pelo ID dentro do container)
+            const el = container.querySelector(`#${inputId}`);
             if(el) {
                 el.style.opacity = '0';
                 el.style.transform = 'translateY(-5px)';
@@ -1318,9 +1322,15 @@
                 if (form.id !== 'form-advertencia') {
                     const queue = generatePostQueue(form.id, formData, form);
                     
+                    // Verifica subgrupos ativos apenas para Licença, Retorno e Prolongamento
                     let subgruposParaPostar = [];
-                    if (form.id === 'form-licenca' && document.getElementById('check-subgrupo-licenca').checked) {
-                        const selectedButtons = document.querySelectorAll('#subgroup-options-container .subgroup-selection-btn.selected');
+                    const subCheck = form.querySelector('.subgroup-toggle-checkbox');
+                    
+                    if (subCheck && subCheck.checked) {
+                        // Busca o container de opções dentro do formulário atual
+                        const optionsContainer = form.querySelector('.subgroup-options-wrapper');
+                        const selectedButtons = optionsContainer.querySelectorAll('.subgroup-selection-btn.selected');
+                        
                         selectedButtons.forEach(b => {
                             const groupName = b.dataset.group;
                             const configKey = "topic" + groupName;
@@ -1351,11 +1361,20 @@
                                     await delay(1000);
                                 }
 
+                                // Captura a permissão específica deste subgrupo
                                 const specificPerm = formData.get(`permissao_${sub.name}`);
+                                
+                                // Substitui ou adiciona a permissão no BBCode
                                 let specificBBCode = item.bbcode;
                                 if(specificPerm) {
-                                     specificBBCode = specificBBCode.replace(/\[b\]Permissão:\[\/b\] .+/g, `[b]Permissão:[/b] ${specificPerm}`);
-                                     specificBBCode = specificBBCode.replace(/\[b\]Permissão:\[\/b\].*?\n/g, `[b]Permissão:[/b] ${specificPerm}\n`);
+                                     if(specificBBCode.includes('[b]Permissão:[/b]')) {
+                                         // Substitui se já existir (Licença/Saída)
+                                         specificBBCode = specificBBCode.replace(/\[b\]Permissão:\[\/b\] .+/g, `[b]Permissão:[/b] ${specificPerm}`);
+                                         specificBBCode = specificBBCode.replace(/\[b\]Permissão:\[\/b\].*?\n/g, `[b]Permissão:[/b] ${specificPerm}\n`);
+                                     } else {
+                                         // Adiciona ao final se não existir (Retorno/Prolongamento)
+                                         specificBBCode += `\n[b]Permissão:[/b] ${specificPerm}`;
+                                     }
                                 }
 
                                 btnText.textContent = `POSTANDO EM ${sub.name}...`;
@@ -1457,9 +1476,10 @@
         const daCheck = document.getElementById('check-membro-da');
         if(daCheck && daCheck.checked) daCheck.click(); 
 
-        // RESETAR SUBGRUPOS (Licença)
-        const subCheck = document.getElementById('check-subgrupo-licenca');
-        if(subCheck && subCheck.checked) subCheck.click();
+        // RESETAR SUBGRUPOS (Itera sobre todos os formulários)
+        document.querySelectorAll('.subgroup-toggle-checkbox').forEach(cb => {
+            if(cb.checked) cb.click();
+        });
     };
   
   async function checkAndApplyUrlParams() {
