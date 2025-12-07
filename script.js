@@ -26,7 +26,8 @@
     // --- VARIÁVEL PARA CONTROLE DE TEMPO DO DA ---
     let daStartTime = null;
 
-function setVisualMode(mode) {
+// --- FUNÇÃO DE MODO VISUAL (PERFORMANCE/TURBO) ---
+    function setVisualMode(mode) {
         const body = document.body;
         const btnTurbo = document.getElementById('btn-turbo');
         const btnPerf = document.getElementById('btn-performance');
@@ -35,19 +36,23 @@ function setVisualMode(mode) {
             // Ativa modo leve
             body.classList.add('performance-mode');
             
-            // Atualiza botões visualmente
+            // Atualiza botões
             if(btnPerf) btnPerf.classList.add('active-mode');
             if(btnTurbo) btnTurbo.classList.remove('active-mode');
             
             // Salva preferência
             localStorage.setItem('wavex_visual_mode', 'performance');
             
+            // Esconde loader forçadamente caso ainda esteja na tela
+            const loader = document.getElementById('tech-loader');
+            if(loader) loader.style.display = 'none';
+
             console.log("Modo Performance Ativado");
         } else {
             // Ativa modo turbo (padrão)
             body.classList.remove('performance-mode');
             
-            // Atualiza botões visualmente
+            // Atualiza botões
             if(btnTurbo) btnTurbo.classList.add('active-mode');
             if(btnPerf) btnPerf.classList.remove('active-mode');
             
@@ -58,24 +63,24 @@ function setVisualMode(mode) {
         }
     }
 
-    // --- [ATUALIZADO] INICIALIZAÇÃO (ZOOM + MODO VISUAL) ---
+    // --- INICIALIZAÇÃO ---
     window.addEventListener('DOMContentLoaded', () => {
-        // 1. Carregar Modo Visual Salvo
+        // 1. Carregar Modo Visual Salvo (Executa imediatamente)
         const savedMode = localStorage.getItem('wavex_visual_mode');
         if (savedMode === 'performance') {
             setVisualMode('performance');
         } else {
-            setVisualMode('turbo'); // Padrão
+            setVisualMode('turbo');
         }
 
-        // 2. Carregar Zoom Salvo (Código antigo mantido)
+        // 2. Carregar Zoom Salvo
         const savedZoom = localStorage.getItem('wavex_zoom');
         if(savedZoom) {
             currentZoom = parseFloat(savedZoom);
             applyZoom();
         }
 
-        // 3. Configurar Inputs e Botões (Código antigo mantido)
+        // 3. Configurar Inputs e Botões
         document.querySelectorAll('.input-field').forEach(input => {
             if (input.nextElementSibling && input.nextElementSibling.classList.contains('add-nick-btn')) {
                 input.addEventListener('keydown', function(e) {
