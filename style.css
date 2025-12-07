@@ -46,7 +46,82 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
     ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.5); }
+/* --- CSS DOS BOTÕES DE MODO --- */
+.mode-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: #f1f5f9;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    color: #64748b;
+    transition: all 0.2s ease;
+}
 
+.mode-btn:hover {
+    background: #e2e8f0;
+}
+
+.mode-btn.active-mode {
+    background: #1e293b;
+    color: white;
+    border-color: #1e293b;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+/* --- OVERRIDES DO MODO PERFORMANCE (PC FRACO) --- */
+body.performance-mode * {
+    /* Desativa animações e transições pesadas */
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    /* Desativa o efeito de vidro (Blur) que consome muita GPU */
+    backdrop-filter: none !important; 
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Ajustes visuais específicos para quando o Blur é removido */
+body.performance-mode {
+    background: #f0f2f5 !important; /* Cor de fundo sólida */
+}
+
+/* Header sólido */
+body.performance-mode #header-panel {
+    background: #ffffff !important;
+    border-bottom: 1px solid #cbd5e1;
+}
+
+/* Inputs e containers sólidos */
+body.performance-mode .input-bar,
+body.performance-mode .da-toggle-wrapper,
+body.performance-mode .subgroup-selection-btn,
+body.performance-mode #notification-panel,
+body.performance-mode #toast-container > div {
+    background: #ffffff !important;
+    border: 1px solid #94a3b8 !important;
+}
+
+/* Hover desativado (remove movimento) */
+body.performance-mode .subgroup-selection-btn:hover,
+body.performance-mode .da-toggle-wrapper:hover {
+    transform: none !important;
+    background: #f8fafc !important;
+}
+
+/* Botões selecionados no modo performance */
+body.performance-mode .subgroup-selection-btn.selected {
+    background: #dcfce7 !important; /* Verde sólido claro */
+    border-color: #16a34a !important;
+}
+
+/* Loading screen estática */
+body.performance-mode .tech-ring {
+    animation: none !important;
+    border-color: #cbd5e1 !important;
+}
     /* --- LOADER --- */
     #tech-loader {
         position: fixed; inset: 0; z-index: 9999;
