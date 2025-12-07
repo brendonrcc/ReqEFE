@@ -46,38 +46,46 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
     ::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.5); }
+
 /* --- CSS DOS BOTÕES DE MODO --- */
 .mode-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px;
-    background: #f1f5f9;
+    padding: 12px 8px; /* Mais espaço interno */
+    background: #f8fafc;
     border: 2px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 14px;
     color: #64748b;
     transition: all 0.2s ease;
     cursor: pointer;
+    min-height: 75px; /* Garante altura igual */
+    gap: 6px;
 }
 
-.mode-btn:hover { background: #e2e8f0; }
+.mode-btn:hover { background: #e2e8f0; transform: translateY(-2px); }
 
 .mode-btn.active-mode {
     background: #1e293b;
     color: white;
     border-color: #1e293b;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px -2px rgba(30, 41, 59, 0.3);
+    transform: none;
 }
 
-/* --- OVERRIDES DO MODO PERFORMANCE (PC FRACO) --- */
-
-/* 1. Remove Loader Imediatamente */
-body.performance-mode #tech-loader {
-    display: none !important;
+.mode-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-/* 2. Remove efeitos pesados */
+/* --- OVERRIDES DO MODO PERFORMANCE (CORREÇÕES) --- */
+
+/* 1. Remove Loader e Efeitos */
+body.performance-mode #tech-loader { display: none !important; }
+
 body.performance-mode * {
     transition: none !important;
     animation: none !important;
@@ -87,31 +95,66 @@ body.performance-mode * {
     -webkit-backdrop-filter: none !important;
 }
 
-/* 3. Ajustes visuais específicos */
+/* 2. Fundo Geral */
 body.performance-mode {
-    background: #5d8ea3 !important; /* Cor solicitada */
+    background: #5d8ea3 !important;
 }
 
-/* Deixa containers brancos para contraste com o fundo azul */
-body.performance-mode #header-panel,
+/* 3. Header e Dropdown Sólidos */
+body.performance-mode #header-panel {
+    background: #ffffff !important;
+    border-bottom: 2px solid #cbd5e1 !important; /* Borda mais grossa para definição */
+}
+
+/* CORREÇÃO: Fundo da Seta do Dropdown no Header */
+body.performance-mode #dropdown-arrow-bg {
+    background: #f1f5f9 !important; /* Cinza claro para destacar do branco */
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* 4. Containers e Inputs Sólidos */
 body.performance-mode .input-bar,
 body.performance-mode .da-toggle-wrapper,
 body.performance-mode .subgroup-selection-btn,
 body.performance-mode #notification-panel,
 body.performance-mode #settings-menu,
-body.performance-mode #toast-container > div {
+body.performance-mode #toast-container > div,
+body.performance-mode .minimal-perm-group {
     background: #ffffff !important;
-    border: 1px solid #cbd5e1 !important;
+    border: 1px solid #94a3b8 !important;
 }
 
-/* Remove hover (estático) */
+/* 5. CORREÇÃO: Botões de Zoom e Configurações */
+/* Garante que os botões de zoom tenham fundo cinza para aparecer no menu branco */
+body.performance-mode .zoom-btn {
+    background: #e2e8f0 !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+body.performance-mode .zoom-btn:hover {
+    background: #cbd5e1 !important;
+}
+
+/* 6. Correção dos Botões de Modo (Turbo/Performance) dentro do menu */
+body.performance-mode .mode-btn {
+    background: #f8fafc !important;
+    border: 2px solid #cbd5e1 !important;
+    color: #64748b !important;
+    transform: none !important;
+}
+body.performance-mode .mode-btn.active-mode {
+    background: #334155 !important; /* Cinza escuro ao invés de preto total */
+    color: white !important;
+    border-color: #334155 !important;
+}
+
+/* 7. Hover e Seleção */
 body.performance-mode .subgroup-selection-btn:hover,
 body.performance-mode .da-toggle-wrapper:hover {
     transform: none !important;
     background: #f1f5f9 !important;
 }
 
-/* Seleção sólida */
 body.performance-mode .subgroup-selection-btn.selected {
     background: #dcfce7 !important;
     border-color: #16a34a !important;
