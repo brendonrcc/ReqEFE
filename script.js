@@ -89,6 +89,13 @@
         btn.classList.toggle('selected');
         const group = btn.dataset.group; // DA, DRI, DM
         
+        // Encontra o formulário pai para verificar se é RETORNO
+        const form = btn.closest('form');
+        const isRetorno = form.id === 'form-retorno_licenca';
+
+        // Se for retorno, apenas toggle a classe selected (visual), não cria input
+        if (isRetorno) return;
+
         // Encontra a lista de permissões DENTRO do container atual
         const optionsWrapper = btn.closest('.subgroup-options-wrapper');
         const container = optionsWrapper.querySelector('.subgroup-permissions-list');
