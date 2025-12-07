@@ -155,6 +155,49 @@
             throw new Error("Falha ao registrar Log do DA.");
         }
     }
+
+function setVisualMode(mode) {
+        const body = document.body;
+        const btnTurbo = document.getElementById('btn-turbo');
+        const btnPerf = document.getElementById('btn-performance');
+
+        if (mode === 'performance') {
+            // Ativa modo leve
+            body.classList.add('performance-mode');
+            
+            // Atualiza botões
+            if(btnPerf) btnPerf.classList.add('active-mode');
+            if(btnTurbo) btnTurbo.classList.remove('active-mode');
+            
+            // Salva preferência
+            localStorage.setItem('wavex_visual_mode', 'performance');
+            
+            // Feedback sutil
+            console.log("Modo Performance Ativado");
+        } else {
+            // Ativa modo turbo (padrão)
+            body.classList.remove('performance-mode');
+            
+            // Atualiza botões
+            if(btnTurbo) btnTurbo.classList.add('active-mode');
+            if(btnPerf) btnPerf.classList.remove('active-mode');
+            
+            // Salva preferência
+            localStorage.setItem('wavex_visual_mode', 'turbo');
+            
+            console.log("Modo Turbo Ativado");
+        }
+    }
+
+    // Carregar preferência salva ao iniciar
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedMode = localStorage.getItem('wavex_visual_mode');
+        // Se houver salvo 'performance', aplica. Caso contrário, mantém Turbo (padrão)
+        if (savedMode === 'performance') {
+            setVisualMode('performance');
+        } else {
+            setVisualMode('turbo'); // Garante estado inicial dos botões
+        }
     
     function toggleSettings() {
         const menu = document.getElementById('settings-menu');
